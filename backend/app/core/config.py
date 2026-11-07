@@ -83,6 +83,17 @@ class Settings(BaseSettings):
             url = "postgresql+asyncpg://" + url[len("postgres://"):]
         elif url.startswith("postgresql://"):
             url = "postgresql+asyncpg://" + url[len("postgresql://"):]
+        # Neon/Supabase URLs use libpq params (sslmode, channel_binding) that asyncpg rejects.
+        if url.startswith("postgresql+asyncpg://") and "?" in url:
+            from urllib.parse import parse_qsl, urlencode
+
+            base, query = url.split("?", 1)
+            params = dict(parse_qsl(query))
+            sslmode = params.pop("sslmode", None)
+            params.pop("channel_binding", None)
+            if sslmode and sslmode != "disable" and "ssl" not in params:
+                params["ssl"] = "require"
+            url = base + ("?" + urlencode(params) if params else "")
         return url
 
     @property

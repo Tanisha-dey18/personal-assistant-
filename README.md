@@ -108,16 +108,20 @@ Open **http://localhost:8080**. Compose wires up the database, vector store and 
 
 ## 5. Deploying
 
-**Recommended setup:** backend on **Render** (or Railway), Postgres from the same platform, vectors on **Qdrant Cloud** (free 1 GB), frontend on **Vercel**.
+**Free setup:** backend on **Render's free plan**, Postgres on **Neon** (free and permanent), vectors on **Qdrant Cloud** (free 1 GB), frontend on **Vercel** (free). Only OpenAI usage costs money.
 
-1. **Qdrant Cloud:** create a free cluster and copy its URL and API key.
-2. **Backend on Render:** *New → Blueprint*, point it at this repo (it uses `render.yaml`). Set these env vars:
-   `OPENAI_API_KEY`, `ENCRYPTION_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`,
+> Why not Render's own Postgres? Render's free database is **deleted after 30 days**, which would wipe ASTRA's memory. Neon's free tier doesn't expire.
+
+1. **Neon:** https://console.neon.tech → create a project and copy the connection string (`postgresql://…?sslmode=require`). ASTRA converts it for its async driver automatically.
+2. **Qdrant Cloud:** create a free cluster and copy its URL and API key.
+3. **Backend on Render:** *New → Blueprint*, point it at this repo (it uses `render.yaml`, which sets `plan: free`). If Render shows a price, check the instance type says **Free**. Set these env vars:
+   `OPENAI_API_KEY`, `ENCRYPTION_KEY`, `DATABASE_URL` (Neon), `QDRANT_URL`, `QDRANT_API_KEY`,
    `FRONTEND_URL=https://your-app.vercel.app`, `BACKEND_PUBLIC_URL=https://astra-api.onrender.com`,
-   `CORS_ORIGINS=https://your-app.vercel.app`. `SECRET_KEY` is generated for you, and `DATABASE_URL` comes from the attached Postgres.
-   *Railway:* create a service from `backend/` (it has a Dockerfile), add a Postgres plugin, and set the same variables.
-3. **Frontend on Vercel:** import the repo, set the root directory to `frontend`, add the env var `VITE_API_URL=https://astra-api.onrender.com`, and deploy (`vercel.json` handles SPA routes).
-4. Create your account, then set `ALLOW_REGISTRATION=false` on the backend.
+   `CORS_ORIGINS=https://your-app.vercel.app`. `SECRET_KEY` is generated for you.
+   Free instances sleep after about 15 minutes idle, so the first message after a break takes 30–60 seconds.
+   *Railway:* create a service from `backend/` (it has a Dockerfile) and set the same variables. Railway gives a one-time trial credit, then it's paid.
+4. **Frontend on Vercel:** import the repo, set the root directory to `frontend`, add the env var `VITE_API_URL=https://astra-api.onrender.com`, and deploy (`vercel.json` handles SPA routes).
+5. Create your account, then set `ALLOW_REGISTRATION=false` on the backend.
 
 > Run **one** backend process when using embedded Qdrant (local file mode). With Qdrant server/Cloud plus Postgres you can scale out. Free Render instances sleep when idle, so proactive nudges only fire while the instance is awake.
 
