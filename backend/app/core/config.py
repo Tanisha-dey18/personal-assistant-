@@ -16,7 +16,9 @@ def _abs(p: str) -> str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=str(BASE_DIR / ".env"), extra="ignore")
+    # backend/.env first, then the project-root .env.local written by `neon deploy` / `neon env pull`
+    # (later files win; real environment variables, e.g. on Render, win over both).
+    model_config = SettingsConfigDict(env_file=(str(BASE_DIR / ".env"), str(BASE_DIR.parent / ".env.local")), extra="ignore")
 
     APP_NAME: str = "ASTRA"
     ENV: str = "development"  # development | production
@@ -33,6 +35,9 @@ class Settings(BaseSettings):
     # Storage. SQLite + embedded Qdrant are used automatically when the URLs are empty,
     # so the app runs on a laptop without Docker. Use Postgres/Qdrant/Redis in production.
     DATABASE_URL: str = "sqlite+aiosqlite:///./data/astra.db"
+    # Neon's direct (non -pooler) URL. Preferred when set: ASTRA is a long-running server with its own
+    # asyncpg pool, and asyncpg's prepared statements break behind PgBouncer transaction pooling.
+    DATABASE_URL_UNPOOLED: str = ""
     QDRANT_URL: str = ""
     QDRANT_API_KEY: str = ""
     QDRANT_PATH: str = "./data/qdrant"
@@ -73,7 +78,7 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self) -> str:
-        url = self.DATABASE_URL
+        url = self.DATABASE_URL_UNPOOLED or self.DATABASE_URL
         # Render/Railway give postgres:// URLs; SQLAlchemy async needs the asyncpg driver.
         if url.startswith("sqlite") and ":///" in url:
             prefix, path = url.split(":///", 1)

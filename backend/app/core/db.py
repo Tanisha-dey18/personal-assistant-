@@ -26,7 +26,10 @@ if _url.startswith("sqlite"):
         cur.execute("PRAGMA journal_mode=WAL")
         cur.close()
 else:
-    engine = create_async_engine(_url, pool_pre_ping=True, pool_size=10, max_overflow=10)
+    # pool_pre_ping + pool_recycle survive Neon scale-to-zero (idle connections get dropped).
+    # If someone still points at a -pooler (PgBouncer) host, disable asyncpg's statement cache.
+    _args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0} if "-pooler" in _url else {}
+    engine = create_async_engine(_url, pool_pre_ping=True, pool_recycle=240, pool_size=5, max_overflow=5, connect_args=_args)
 
 SessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 

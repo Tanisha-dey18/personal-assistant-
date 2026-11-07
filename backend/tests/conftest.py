@@ -5,6 +5,7 @@ import tempfile
 _tmp = tempfile.mkdtemp(prefix="astra-test-")
 os.environ.update({
     "DATABASE_URL": f"sqlite+aiosqlite:///{_tmp}/test.db".replace("\\", "/"),
+    "DATABASE_URL_UNPOOLED": "",
     "QDRANT_URL": "",
     "QDRANT_PATH": f"{_tmp}/qdrant",
     "REDIS_URL": "",
