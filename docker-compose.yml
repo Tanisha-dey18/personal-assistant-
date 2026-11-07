@@ -1,0 +1,50 @@
+# Full stack: PostgreSQL + Qdrant + Redis + FastAPI + React (nginx)
+#   1. cp backend/.env.example backend/.env   and set OPENAI_API_KEY, SECRET_KEY, ENCRYPTION_KEY
+#   2. docker compose up --build
+#   3. open http://localhost:8080
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: astra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-astra}
+      POSTGRES_DB: astra
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U astra"]
+      interval: 5s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    volumes: [qdrant:/qdrant/storage]
+
+  redis:
+    image: redis:7-alpine
+
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://astra:${POSTGRES_PASSWORD:-astra}@postgres:5432/astra
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+      FRONTEND_URL: http://localhost:8080
+      BACKEND_PUBLIC_URL: http://localhost:8080
+      CORS_ORIGINS: http://localhost:8080
+    depends_on:
+      postgres: { condition: service_healthy }
+      qdrant: { condition: service_started }
+      redis: { condition: service_started }
+    ports: ["8000:8000"]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    depends_on: [backend]
+    ports: ["8080:80"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  qdrant:

@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink-950 text-slate-200 font-sans antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 10% -10%, rgba(59, 130, 246, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(139, 92, 246, 0.08), transparent 60%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.35);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #262c3f transparent;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.03] border border-white/[0.07] backdrop-blur-xl;
+  }
+  .glass-strong {
+    @apply bg-ink-900/80 border border-white/10 backdrop-blur-2xl;
+  }
+  .card {
+    @apply glass rounded-2xl p-5;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-astra-blue to-astra-violet text-white shadow-glow-sm hover:brightness-110 active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply btn text-slate-300 hover:bg-white/[0.06] hover:text-white;
+  }
+  .btn-outline {
+    @apply btn border border-white/10 text-slate-200 hover:bg-white/[0.06];
+  }
+  .btn-danger {
+    @apply btn bg-rose-500/15 text-rose-300 border border-rose-500/25 hover:bg-rose-500/25;
+  }
+  .input {
+    @apply w-full rounded-xl bg-ink-850 border border-white/10 px-3.5 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-astra-blue/60 focus:ring-2 focus:ring-astra-blue/20;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-slate-400;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-slate-300;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-sky-300 via-indigo-300 to-violet-400 bg-clip-text text-transparent;
+  }
+  .page-title {
+    @apply font-display text-2xl md:text-3xl font-semibold tracking-tight text-white;
+  }
+}
+
+/* Markdown */
+.prose-astra {
+  @apply text-[15px] leading-relaxed text-slate-200;
+}
+.prose-astra p { @apply my-2; }
+.prose-astra h1, .prose-astra h2, .prose-astra h3 { @apply mt-4 mb-2 font-display font-semibold text-white; }
+.prose-astra h1 { @apply text-xl; }
+.prose-astra h2 { @apply text-lg; }
+.prose-astra ul { @apply my-2 list-disc pl-5 space-y-1; }
+.prose-astra ol { @apply my-2 list-decimal pl-5 space-y-1; }
+.prose-astra a { @apply text-sky-300 underline decoration-sky-300/30 underline-offset-2 hover:decoration-sky-300; }
+.prose-astra strong { @apply text-white font-semibold; }
+.prose-astra blockquote { @apply border-l-2 border-violet-400/50 pl-3 text-slate-300 italic; }
+.prose-astra code:not(pre code) { @apply rounded-md bg-white/[0.08] px-1.5 py-0.5 font-mono text-[13px] text-sky-200; }
+.prose-astra pre { @apply my-3 overflow-x-auto rounded-xl border border-white/10 bg-ink-950/80 p-4 font-mono text-[13px] leading-relaxed; }
+.prose-astra table { @apply my-3 w-full border-collapse text-sm; }
+.prose-astra th { @apply border-b border-white/15 px-2 py-1.5 text-left font-semibold text-white; }
+.prose-astra td { @apply border-b border-white/5 px-2 py-1.5; }
+.prose-astra hr { @apply my-4 border-white/10; }
+
+.cursor-blink::after {
+  content: "▍";
+  @apply ml-0.5 text-violet-300;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }

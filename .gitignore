@@ -1,0 +1,15 @@
+# secrets & local data
+backend/.env
+.env
+backend/data/
+*.db
+# python
+__pycache__/
+*.pyc
+backend/.venv/
+.pytest_cache/
+# node
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
