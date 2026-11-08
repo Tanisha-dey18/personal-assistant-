@@ -43,7 +43,7 @@ export default function Settings() {
 
   return (
     <div>
-      <PageHeader title="AI settings" subtitle="Shape ASTRA's personality, brain, voice, memory and privacy." />
+      <PageHeader title="AI settings" subtitle="Shape JARVIS's personality, brain, voice, memory and privacy." />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Personality</span>}>
           <div className="space-y-4">
@@ -54,7 +54,7 @@ export default function Settings() {
             <Toggle checked={P.hinglish} onChange={(v) => save({ personality: { hinglish: v } })} label="Hinglish" hint="Understand and reply in Hinglish when you use it" />
             <Field label="Learning level"><select className="input" value={s.learning.level} onChange={(e) => save({ learning: { level: e.target.value } })}><option>beginner</option><option>intermediate</option><option>advanced</option></select></Field>
             <Field label="Teaching style"><input className="input" defaultValue={s.learning.style} onBlur={(e) => save({ learning: { style: e.target.value } })} /></Field>
-            <Field label="Custom instructions" hint="Anything ASTRA should always keep in mind."><textarea className="input" defaultValue={P.custom_instructions} onBlur={(e) => save({ personality: { custom_instructions: e.target.value } })} /></Field>
+            <Field label="Custom instructions" hint="Anything JARVIS should always keep in mind."><textarea className="input" defaultValue={P.custom_instructions} onBlur={(e) => save({ personality: { custom_instructions: e.target.value } })} /></Field>
           </div>
         </Card>
 
@@ -82,11 +82,11 @@ export default function Settings() {
           <div className="space-y-4">
             <Field label="Voice"><div className="flex gap-2">
               <select className="input" value={V.voice} onChange={(e) => save({ voice: { voice: e.target.value } })}>{meta.voices.map((v: string) => <option key={v}>{v}</option>)}</select>
-              <button className="btn-outline shrink-0" onClick={() => new VoicePlayer(setLevel).speak(`Hey${user?.name ? " " + user.name.split(" ")[0] : ""}, I'm ASTRA. This is how I sound.`, V.voice, V.speed)}><Volume2 className="h-4 w-4" /> Preview</button>
+              <button className="btn-outline shrink-0" onClick={() => new VoicePlayer(setLevel).speak(`Hey${user?.name ? " " + user.name.split(" ")[0] : ""}, I'm JARVIS. This is how I sound.`, V.voice, V.speed)}><Volume2 className="h-4 w-4" /> Preview</button>
             </div></Field>
             <Field label={`Speed · ${V.speed}x`}><input type="range" min={0.7} max={1.4} step={0.05} value={V.speed} className="w-full accent-violet-500" onChange={(e) => save({ voice: { speed: +e.target.value } })} /></Field>
             <Toggle checked={V.auto_speak} onChange={(v) => save({ voice: { auto_speak: v } })} label="Speak replies by default" hint="Voice messages always get spoken replies" />
-            <Toggle checked={V.hands_free} onChange={(v) => save({ voice: { hands_free: v } })} label="Hands-free conversation" hint="After ASTRA speaks, the mic re-opens automatically. Never listens in the background." />
+            <Toggle checked={V.hands_free} onChange={(v) => save({ voice: { hands_free: v } })} label="Hands-free conversation" hint="After JARVIS speaks, the mic re-opens automatically. Never listens in the background." />
           </div>
         </Card>
 
@@ -120,7 +120,7 @@ export default function Settings() {
             </div>
             <div>
               <p className="label">Your data</p>
-              <p className="mb-3 text-sm text-slate-400">Download everything ASTRA stores about you (memories decrypted, conversations, tasks, projects…). Credentials are never exported.</p>
+              <p className="mb-3 text-sm text-slate-400">Download everything JARVIS stores about you (memories decrypted, conversations, tasks, projects…). Credentials are never exported.</p>
               <button className="btn-outline" onClick={exportAll}><Download className="h-4 w-4" /> Export all data (JSON)</button>
             </div>
             <div>

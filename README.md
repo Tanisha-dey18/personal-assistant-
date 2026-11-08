@@ -1,7 +1,7 @@
-# ASTRA — Adaptive Smart Thinking & Responsive Assistant
+# JARVIS
 > *Your mind, extended.*
 
-ASTRA is a personal AI companion with **long-term memory**, a **personal knowledge graph**, **voice**, **tools** and a **life dashboard**. It remembers your background, projects, goals and past conversations, so each conversation picks up where the last one left off.
+JARVIS is a personal AI companion with **long-term memory**, a **personal knowledge graph**, **voice**, **tools** and a **life dashboard**. It remembers your background, projects, goals and past conversations, so each conversation picks up where the last one left off.
 
 ```
 ┌──────────────────────── Frontend (React + TS + Vite + Tailwind + Framer Motion) ────────────────────────┐
@@ -28,14 +28,14 @@ ASTRA is a personal AI companion with **long-term memory**, a **personal knowled
 | **Long-term memory** | After every message a fast model pulls out facts, which are categorised, marked **confirmed / assumption / temporary** and scored for importance. Near-duplicates are merged and existing memories are updated when facts change. **Sensitive facts wait for your approval** and are **encrypted at rest**. |
 | **Semantic retrieval** | Each reply gets only the relevant slice of memory: similarity + importance + recency ranking, core identity facts, knowledge-graph links, relevant past conversations, document excerpts, open tasks. You can open *"N memories used"* on any reply to see exactly what was sent. |
 | **Knowledge graph** | Entities (people, events, projects, technologies, skills, goals, achievements…) and relations are built automatically and shown as an interactive force graph. Click a node to see its memories. |
-| **"What ASTRA knows about me"** | A live profile built from the memory database, an AI-written portrait, and queues for pending sensitive items and assumptions to confirm. You can edit anything. |
+| **"What JARVIS knows about me"** | A live profile built from the memory database, an AI-written portrait, and queues for pending sensitive items and assumptions to confirm. You can edit anything. |
 | **Timeline** | Dated memories, career milestones and projects in one timeline. |
-| **Voice** | Push-to-talk with automatic end-of-speech detection, speech-to-text that handles Hinglish, natural TTS with 10 voices, interruptible playback, a **hands-free** loop, and an orb that reacts to your mic and to ASTRA's voice. The mic is never on in the background. |
+| **Voice** | Push-to-talk with automatic end-of-speech detection, speech-to-text that handles Hinglish, natural TTS with 10 voices, interruptible playback, a **hands-free** loop, and an orb that reacts to your mic and to JARVIS's voice. The mic is never on in the background. |
 | **Tools** | Memory search/save/update/forget, tasks, reminders, projects, career tracker, document search, daily briefing, weather (no key needed), web search (Tavily), read webpage (SSRF-protected), Google Calendar + Gmail, GitHub. |
 | **Human-in-the-loop** | Sending email, creating calendar events and deleting memories only **prepare** an action. A confirmation card appears and nothing happens until you click Confirm. |
 | **Dashboard** | Home (greeting, clock, AI status, quick chat, priorities, reminders, weekly chart, projects, recent chats), Career (pipeline kanban, roadmap, skills, internships, achievements), Projects, Productivity (tasks, week planner, reminders, calendar), Memory, Import, Integrations, AI Settings. |
 | **Proactive engine** | Due reminders, task deadlines, stale projects, project deadlines, follow-ups on job applications, and a weekly AI report. Each one can be turned off in settings. Shown in the bell menu and as optional browser notifications. |
-| **Onboarding & imports** | An 8-question onboarding, uploads of CV/PDF/DOCX/MD/TXT, the **ChatGPT export** (.zip or conversations.json), and pasted free text. ASTRA extracts facts and queues clarifying questions when something is ambiguous. |
+| **Onboarding & imports** | An 8-question onboarding, uploads of CV/PDF/DOCX/MD/TXT, the **ChatGPT export** (.zip or conversations.json), and pasted free text. JARVIS extracts facts and queues clarifying questions when something is ambiguous. |
 | **Security & privacy** | bcrypt passwords, JWT, every query filtered by `user_id` (tested), Fernet encryption for sensitive memories and all stored credentials, API keys only on the server, rate limiting, input validation, SSRF guard, security headers, full **JSON export**, scoped **data wipe**, account deletion. |
 
 ---
@@ -61,7 +61,7 @@ Open `backend/.env` and set:
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
-With no database URLs set, ASTRA uses a **SQLite file + embedded Qdrant** in `backend/data/`, so you don't need to install any databases.
+With no database URLs set, JARVIS uses a **SQLite file + embedded Qdrant** in `backend/data/`, so you don't need to install any databases.
 API docs: http://localhost:8000/api/docs
 
 ### Frontend
@@ -70,7 +70,7 @@ cd frontend
 npm install
 npm run dev
 ```
-Open **http://localhost:5173**, create your account and run the onboarding. Then say *"Hey Astra, what's going on?"*
+Open **http://localhost:5173**, create your account and run the onboarding. Then say *"Hey Jarvis, what's going on?"*
 
 > **Tip:** once your account exists, set `ALLOW_REGISTRATION=false` in `backend/.env` so nobody else can sign up on your instance.
 
@@ -110,9 +110,9 @@ Open **http://localhost:8080**. Compose wires up the database, vector store and 
 
 **Free setup:** backend on **Render's free plan**, Postgres on **Neon** (free and permanent), vectors on **Qdrant Cloud** (free 1 GB), frontend on **Vercel** (free). Only OpenAI usage costs money.
 
-> Why not Render's own Postgres? Render's free database is **deleted after 30 days**, which would wipe ASTRA's memory. Neon's free tier doesn't expire.
+> Why not Render's own Postgres? Render's free database is **deleted after 30 days**, which would wipe JARVIS's memory. Neon's free tier doesn't expire.
 
-1. **Neon:** https://console.neon.tech → create a project and copy the connection string (`postgresql://…?sslmode=require`). ASTRA converts it for its async driver automatically.
+1. **Neon:** https://console.neon.tech → create a project and copy the connection string (`postgresql://…?sslmode=require`). JARVIS converts it for its async driver automatically.
 2. **Qdrant Cloud:** create a free cluster and copy its URL and API key.
 3. **Backend on Render:** *New → Blueprint*, point it at this repo (it uses `render.yaml`, which sets `plan: free`). If Render shows a price, check the instance type says **Free**. Set these env vars:
    `OPENAI_API_KEY`, `ENCRYPTION_KEY`, `DATABASE_URL` (Neon), `QDRANT_URL`, `QDRANT_API_KEY`,
@@ -129,11 +129,11 @@ Open **http://localhost:8080**. Compose wires up the database, vector store and 
 
 ## 6. How the memory engine works (simple version)
 
-1. **You talk** → ASTRA replies (streamed).
+1. **You talk** → JARVIS replies (streamed).
 2. **In the background**, a small, cheap model reads your message and answers one question: *"What here is worth remembering about this person?"* It gets the most similar **existing** memories alongside, so it can **update** an old fact instead of making a duplicate.
 3. Each fact becomes a row in Postgres (text, category, type, importance, source) **plus** a vector in Qdrant. The vector is a list of numbers that captures meaning, so *"that drone hackathon"* still finds *"won 2nd place at SIH with a crop-monitoring drone"*. As a second safety net, anything ≥ 92% similar to an existing memory is merged.
 4. People, projects and technologies mentioned in the fact become **graph nodes**, and the links between them become **edges**.
-5. **Next message:** ASTRA embeds what you said, pulls the top matches (ranked by similarity, importance and recency), adds a few always-relevant identity facts, 1-hop graph links, related older conversations and open tasks, and puts **only that** in the prompt.
+5. **Next message:** JARVIS embeds what you said, pulls the top matches (ranked by similarity, importance and recency), adds a few always-relevant identity facts, 1-hop graph links, related older conversations and open tasks, and puts **only that** in the prompt.
 
 Qdrant payloads contain only IDs (no text), so the vector DB holds nothing readable about you.
 
@@ -175,7 +175,7 @@ Frontend: `npm run build` (type-checks + production build).
 ---
 
 ## 9. Key decisions, explained simply
-* **SQLite + embedded Qdrant by default:** you can run ASTRA today without installing databases. The same code switches to Postgres/Qdrant server/Redis just by setting URLs.
+* **SQLite + embedded Qdrant by default:** you can run JARVIS today without installing databases. The same code switches to Postgres/Qdrant server/Redis just by setting URLs.
 * **Keyword auto-mode, not an extra AI call:** choosing the mode costs zero latency and zero money. You can always override it.
 * **Memory extraction after the reply:** you never wait for it. Its result shows up as a toast ("🧠 Remembered…").
 * **Separate fast model for extraction/summaries:** it's cheaper, and the main model can be anything you like.
@@ -183,8 +183,8 @@ Frontend: `npm run build` (type-checks + production build).
 * **`create_all` instead of migrations (for now):** tables are created automatically on startup. If you change models later, add Alembic (`alembic init`) before deploying schema changes to real data.
 
 ## 10. Honest limitations / next steps
-* Proactive nudges appear in-app and as browser notifications while ASTRA is open. There's no mobile push yet; a PWA + Web Push or a Telegram bot would be the next step.
-* Voice is push-to-talk with auto-stop (plus an optional hands-free loop). There's no wake word ("Hey Astra") yet.
+* Proactive nudges appear in-app and as browser notifications while JARVIS is open. There's no mobile push yet; a PWA + Web Push or a Telegram bot would be the next step.
+* Voice is push-to-talk with auto-stop (plus an optional hands-free loop). There's no wake word ("Hey Jarvis") yet.
 * Scanned (image-only) PDFs need OCR first.
 * Weekly reports and stale-project checks run only while the backend is running.
 * Changing `EMBEDDING_MODEL`/`EMBEDDING_DIM` after data exists requires re-creating the Qdrant collections (re-embedding).

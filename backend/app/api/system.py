@@ -83,7 +83,7 @@ async def transcribe(file: UploadFile = File(...), user: User = Depends(rate_lim
     try:
         provider = await get_provider(db, user.id)
         text = await provider.transcribe(data, Path(file.filename or "audio.webm").name,
-                                         prompt="Conversation with ASTRA. The speaker may mix Hindi and English (Hinglish).")
+                                         prompt="Conversation with JARVIS. The speaker may mix Hindi and English (Hinglish).")
     except AIUnavailable as e:
         raise HTTPException(503, str(e)) from e
     except AIError as e:
@@ -267,7 +267,7 @@ def _row(obj) -> dict:
 
 @router.get("/export")
 async def export_all(user: User = Depends(rate_limited_user), db: AsyncSession = Depends(get_db)):
-    """Everything ASTRA stores about you, decrypted, as JSON (secrets/tokens excluded)."""
+    """Everything JARVIS stores about you, decrypted, as JSON (secrets/tokens excluded)."""
     out = {"exported_at": datetime.now(timezone.utc).isoformat(), "user": {"email": user.email, "name": user.name, "settings": get_user_settings(user)}}
     mems = (await db.execute(select(Memory).where(Memory.user_id == user.id))).scalars().all()
     out["memories"] = [store.to_dict(m) for m in mems]

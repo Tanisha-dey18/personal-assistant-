@@ -1,4 +1,4 @@
-"""'What ASTRA knows about me' — built live from the memory database, plus the timeline."""
+"""'What JARVIS knows about me' — built live from the memory database, plus the timeline."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -47,7 +47,7 @@ async def synthesize(db, provider, user) -> str:
         return "I don't know much about you yet. Talk to me, or import your CV / notes / ChatGPT history in Onboarding."
     facts = "\n".join(f"- [{m.category}{'' if m.memory_type == 'confirmed' else ', ' + m.memory_type}] {m.content}" for m in rows)
     text, usage = await provider.complete([
-        {"role": "system", "content": "You are ASTRA. Write a warm, insightful second-person portrait ('You are...') of your owner "
+        {"role": "system", "content": "You are JARVIS. Write a warm, insightful second-person portrait ('You are...') of your owner "
                                       "using ONLY these memories. 150-250 words, markdown with 3-4 short paragraphs. Mention uncertainty for assumptions. "
                                       "Never add facts that aren't listed."},
         {"role": "user", "content": facts}], temperature=0.5)

@@ -37,7 +37,7 @@ function Jobs({ jobs }: { jobs: Job[] }) {
                 {j.result.conversations != null && `${j.result.conversations} conversations · `}{j.result.created} new memories · {j.result.updated} updated{j.result.pending ? ` · ${j.result.pending} awaiting approval` : ""}
               </p>
             )}
-            {j.result?.questions?.length > 0 && <p className="mt-1 text-xs text-amber-300">ASTRA has {j.result.questions.length} question(s) for you — check notifications.</p>}
+            {j.result?.questions?.length > 0 && <p className="mt-1 text-xs text-amber-300">JARVIS has {j.result.questions.length} question(s) for you — check notifications.</p>}
             {j.error && <p className="mt-1 text-xs text-rose-300">{j.error}</p>}
           </div>
         ))}
@@ -108,7 +108,7 @@ export default function Import() {
 
   return (
     <div>
-      <PageHeader title="Knowledge import" subtitle="Feed ASTRA your CV, project docs, notes and ChatGPT history. It extracts facts — it never invents missing details." />
+      <PageHeader title="Knowledge import" subtitle="Feed JARVIS your CV, project docs, notes and ChatGPT history. It extracts facts — it never invents missing details." />
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "documents", label: "Documents & CV", icon: <FileText className="h-4 w-4" /> },
         { id: "chatgpt", label: "ChatGPT export", icon: <MessageSquare className="h-4 w-4" /> },
@@ -143,7 +143,7 @@ export default function Import() {
                   </li>
                 ))}
               </ul>
-            ) : <Empty title="No documents yet" text="Start with your CV — it's the fastest way for ASTRA to understand your background." />}
+            ) : <Empty title="No documents yet" text="Start with your CV — it's the fastest way for JARVIS to understand your background." />}
           </Card>
         </div>
       )}
@@ -153,7 +153,7 @@ export default function Import() {
           <ol className="mb-5 list-decimal space-y-1 pl-5 text-sm text-slate-400">
             <li>In ChatGPT: Settings → Data controls → <b className="text-slate-200">Export data</b>. You'll get an email with a .zip.</li>
             <li>Upload the whole .zip (or just <code className="rounded bg-white/10 px-1">conversations.json</code>) below.</li>
-            <li>ASTRA stores the chats as searchable history, summarises each one, and extracts facts about you <i>only from your own messages</i>.</li>
+            <li>JARVIS stores the chats as searchable history, summarises each one, and extracts facts about you <i>only from your own messages</i>.</li>
           </ol>
           <input type="file" accept=".zip,.json" className="input" onChange={(e) => previewChatgpt(e.target.files?.[0] || null)} />
           {preview && (
@@ -172,10 +172,10 @@ export default function Import() {
       {tab === "text" && (
         <Card>
           <Field label="Label"><input className="input mb-3" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. about me, hackathon notes, semester goals" /></Field>
-          <Field label="Tell ASTRA anything" hint="Background, story, achievements, people in your life, plans… ASTRA extracts the important facts and asks if something's ambiguous.">
+          <Field label="Tell JARVIS anything" hint="Background, story, achievements, people in your life, plans… JARVIS extracts the important facts and asks if something's ambiguous.">
             <textarea className="input min-h-[240px]" value={text} onChange={(e) => setText(e.target.value)} placeholder="I'm a 3rd-year CSE student… Last year our team won the college hackathon with…" />
           </Field>
-          <button className="btn-primary mt-4" disabled={busy || text.length < 10} onClick={importText}>{busy && <Spinner />} Teach ASTRA</button>
+          <button className="btn-primary mt-4" disabled={busy || text.length < 10} onClick={importText}>{busy && <Spinner />} Teach JARVIS</button>
         </Card>
       )}
 

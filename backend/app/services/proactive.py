@@ -82,7 +82,7 @@ async def run_for_user(db, user: User) -> int:
         if not exists:
             body = await weekly_report(db, user)
             if body:
-                n += await _notify(db, user.id, "report", "Your weekly report from ASTRA", body, key)
+                n += await _notify(db, user.id, "report", "Your weekly report from JARVIS", body, key)
 
     await db.commit()
     return n
@@ -103,7 +103,7 @@ async def weekly_report(db, user: User) -> str | None:
         return f"This week: {len(done)} tasks completed, {len(open_)} still open, {len(mems)} new things learned about you."
     facts = "\n".join(f"- [{m.category}] {store.text_of(m)}" for m in mems if not m.sensitive)
     text, usage = await provider.complete([
-        {"role": "system", "content": "You are ASTRA writing a short, warm, honest weekly progress report (max 150 words) for your owner. "
+        {"role": "system", "content": "You are JARVIS writing a short, warm, honest weekly progress report (max 150 words) for your owner. "
                                       "Highlight learning, building and career progress, call out one thing to improve, suggest one focus for next week. Only use the data given."},
         {"role": "user", "content": f"New/updated memories this week:\n{facts or '(none)'}\n\nCompleted tasks: {[t.title for t in done]}\nOpen tasks: {[t.title for t in open_][:15]}"}])
     log_usage(db, user.id, "report", usage)

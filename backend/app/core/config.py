@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # (later files win; real environment variables, e.g. on Render, win over both).
     model_config = SettingsConfigDict(env_file=(str(BASE_DIR / ".env"), str(BASE_DIR.parent / ".env.local")), extra="ignore")
 
-    APP_NAME: str = "ASTRA"
+    APP_NAME: str = "JARVIS"
     ENV: str = "development"  # development | production
     SECRET_KEY: str = DEFAULT_SECRET  # signs JWTs
     ENCRYPTION_KEY: str = ""  # Fernet key for sensitive data; derived from SECRET_KEY if empty
@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     # Storage. SQLite + embedded Qdrant are used automatically when the URLs are empty,
     # so the app runs on a laptop without Docker. Use Postgres/Qdrant/Redis in production.
     DATABASE_URL: str = "sqlite+aiosqlite:///./data/astra.db"
-    # Neon's direct (non -pooler) URL. Preferred when set: ASTRA is a long-running server with its own
+    # Neon's direct (non -pooler) URL. Preferred when set: JARVIS is a long-running server with its own
     # asyncpg pool, and asyncpg's prepared statements break behind PgBouncer transaction pooling.
     DATABASE_URL_UNPOOLED: str = ""
     QDRANT_URL: str = ""

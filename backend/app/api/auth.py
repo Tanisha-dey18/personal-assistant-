@@ -33,7 +33,7 @@ def user_out(u: User) -> dict:
 async def register(body: RegisterIn, db: AsyncSession = Depends(get_db)):
     count = (await db.execute(select(func.count()).select_from(User))).scalar_one()
     if not settings.ALLOW_REGISTRATION and count > 0:
-        raise HTTPException(403, "Registration is closed on this ASTRA instance.")
+        raise HTTPException(403, "Registration is closed on this JARVIS instance.")
     email = body.email.lower()
     if (await db.execute(select(User).where(User.email == email))).scalar_one_or_none():
         raise HTTPException(409, "An account with this email already exists.")

@@ -44,7 +44,7 @@ export default function Productivity() {
 
   return (
     <div>
-      <PageHeader title="Productivity" subtitle="Tasks, reminders and your week — ASTRA's executive mode can manage all of it by voice or chat."
+      <PageHeader title="Productivity" subtitle="Tasks, reminders and your week — JARVIS's executive mode can manage all of it by voice or chat."
         actions={<button className="btn-outline" onClick={() => navigate("/chat", { state: { prefill: "Give me my daily briefing and plan my day.", mode: "executive" } })}><MessageSquare className="h-4 w-4" /> Plan my day</button>} />
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: "tasks", label: "Tasks", icon: <ListTodo className="h-4 w-4" /> },
@@ -124,16 +124,16 @@ export default function Productivity() {
               ))}
             </ul>
           ) : <Empty title="No reminders" text="Say “remind me to call mom at 7pm” in chat." />}
-          <p className="mt-4 text-xs text-slate-500">Reminders appear in the bell menu (and as browser notifications if you enable them) while ASTRA's backend is running.</p>
+          <p className="mt-4 text-xs text-slate-500">Reminders appear in the bell menu (and as browser notifications if you enable them) while JARVIS's backend is running.</p>
         </Card>
       )}
 
       {tab === "calendar" && (
         <Card>
           {google ? (
-            <p className="text-sm text-slate-300">Google Calendar is connected. Ask ASTRA “what’s on my calendar this week?” or “schedule a study session tomorrow 6pm” — new events always ask for your confirmation first.</p>
+            <p className="text-sm text-slate-300">Google Calendar is connected. Ask JARVIS “what’s on my calendar this week?” or “schedule a study session tomorrow 6pm” — new events always ask for your confirmation first.</p>
           ) : (
-            <Empty icon={<CalendarDays className="h-8 w-8" />} title="Google Calendar isn't connected" text="Connect it so ASTRA can read your schedule and propose events."
+            <Empty icon={<CalendarDays className="h-8 w-8" />} title="Google Calendar isn't connected" text="Connect it so JARVIS can read your schedule and propose events."
               action={<Link className="btn-primary" to="/integrations">Connect Google</Link>} />
           )}
         </Card>

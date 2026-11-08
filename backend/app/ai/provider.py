@@ -1,6 +1,6 @@
 """LLM provider abstraction.
 
-Everything else in ASTRA talks to `LLMProvider`, never to the OpenAI SDK directly.
+Everything else in JARVIS talks to `LLMProvider`, never to the OpenAI SDK directly.
 To swap models/providers you either change env vars (any OpenAI-compatible API — OpenRouter,
 Groq, Together, Ollama — works through OPENAI_BASE_URL) or add another class implementing
 the same five methods and register it in `build_provider`."""
@@ -54,7 +54,7 @@ def _wrap_error(e: Exception) -> AIError:
     import openai
 
     if isinstance(e, openai.AuthenticationError):
-        return AIError("The AI provider rejected the API key. Check OPENAI_API_KEY (backend/.env or ASTRA → Integrations).")
+        return AIError("The AI provider rejected the API key. Check OPENAI_API_KEY (backend/.env or JARVIS → Integrations).")
     if isinstance(e, openai.RateLimitError):
         return AIError("The AI provider is rate-limiting us (or the account is out of credit). Try again shortly.")
     if isinstance(e, openai.NotFoundError):
@@ -164,7 +164,7 @@ def build_provider(api_key: str = "", base_url: str = "") -> LLMProvider:
         return _override
     key = api_key or settings.OPENAI_API_KEY
     if not key:
-        raise AIUnavailable("No AI key configured. Add OPENAI_API_KEY to backend/.env or paste a key in ASTRA → Integrations.")
+        raise AIUnavailable("No AI key configured. Add OPENAI_API_KEY to backend/.env or paste a key in JARVIS → Integrations.")
     return OpenAIProvider(key, base_url or settings.OPENAI_BASE_URL)
 
 

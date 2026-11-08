@@ -17,7 +17,7 @@ import { VoicePlayer, VoiceRecorder, transcribe } from "../lib/voice";
 import { ChatSocket, ServerEvent } from "../lib/ws";
 
 const SUGGESTIONS = [
-  "Hey Astra, what's going on?",
+  "Hey Jarvis, what's going on?",
   "I'm bored. Talk to me.",
   "Explain logistic regression like I'm smart but sleepy",
   "Plan my day around my open tasks",
@@ -136,7 +136,7 @@ export default function Chat() {
 
   const startListening = useCallback(async () => {
     if (recorder.current?.active) return;
-    player.current?.stop(); // interrupt ASTRA if she's talking
+    player.current?.stop(); // interrupt JARVIS if she's talking
     try {
       setRecording(true);
       setOrb("listening");
@@ -365,7 +365,7 @@ export default function Chat() {
                       <div className="mt-1 h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-sky-300 via-indigo-500 to-violet-700 shadow-glow-sm" />
                       <div className="min-w-0 flex-1">
                         <div className="mb-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
-                          <span className="font-semibold tracking-wider text-slate-300">ASTRA</span>
+                          <span className="font-semibold tracking-wider text-slate-300">JARVIS</span>
                           {m.mode && <span className={cn("rounded-full bg-gradient-to-r px-2 py-px text-[10px] font-semibold text-ink-950", MODE_COLORS[m.mode])}>{MODES.find((x) => x.id === m.mode)?.label}</span>}
                           {!!m.memories?.length && (
                             <button className="flex items-center gap-1 hover:text-violet-300" onClick={() => setContextPanel(m.memories!)}>
@@ -410,7 +410,7 @@ export default function Chat() {
             <div className="glass flex min-w-0 flex-1 items-end gap-1 rounded-2xl p-1.5 focus-within:border-astra-blue/40">
               <textarea
                 className="max-h-48 min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-[15px] text-slate-100 outline-none placeholder:text-slate-500"
-                placeholder={recording ? "Listening… (stops when you pause)" : `Message ASTRA${mode !== "auto" ? ` · ${modeInfo.label}` : ""}`}
+                placeholder={recording ? "Listening… (stops when you pause)" : `Message JARVIS${mode !== "auto" ? ` · ${modeInfo.label}` : ""}`}
                 rows={1}
                 value={input}
                 onChange={(e) => { setInput(e.target.value); e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 192) + "px"; }}
@@ -420,7 +420,7 @@ export default function Chat() {
                 <button className="btn-ghost !p-2.5 text-violet-300" title="Stop speaking" onClick={() => { player.current?.stop(); setOrb("idle"); }}><Square className="h-4 w-4" /></button>
               )}
               <button className={cn("btn !p-2.5", recording ? "bg-rose-500/20 text-rose-300 ring-1 ring-rose-400/40" : "btn-ghost")}
-                title={recording ? "Stop recording" : "Talk to ASTRA"} onClick={toggleMic} disabled={busy && !recording}>
+                title={recording ? "Stop recording" : "Talk to JARVIS"} onClick={toggleMic} disabled={busy && !recording}>
                 {recording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
               </button>
               <button className="btn-primary !p-2.5" onClick={() => sendText(input)} disabled={!input.trim() || busy} title="Send">
@@ -443,7 +443,7 @@ export default function Chat() {
             <motion.div initial={{ x: 400 }} animate={{ x: 0 }} exit={{ x: 400 }} transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="glass-strong absolute inset-y-0 right-0 z-30 w-full max-w-sm overflow-y-auto p-5 shadow-2xl">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-display font-semibold text-white">Memories ASTRA used</h3>
+                <h3 className="font-display font-semibold text-white">Memories JARVIS used</h3>
                 <button className="btn-ghost !p-1.5" onClick={() => setContextPanel(null)}><X className="h-4 w-4" /></button>
               </div>
               <p className="mb-4 text-xs text-slate-500">Only these were sent to the model for that reply — not your whole memory.</p>

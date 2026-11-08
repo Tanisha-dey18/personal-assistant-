@@ -1,4 +1,4 @@
-"""Core tools ASTRA can call: memory, tasks, reminders, projects, career, documents,
+"""Core tools JARVIS can call: memory, tasks, reminders, projects, career, documents,
 weather, web search and page reading."""
 from __future__ import annotations
 
@@ -118,7 +118,7 @@ async def update_task(ctx: ToolContext, a: dict):
     return {"updated": _task(t)}
 
 
-@tool("create_reminder", "Set a reminder that ASTRA will notify the user about at a given time.",
+@tool("create_reminder", "Set a reminder that JARVIS will notify the user about at a given time.",
       {"text": {"type": "string"}, "remind_at": {"type": "string", "description": "ISO datetime in user's local time"}},
       ["text", "remind_at"], category="productivity")
 async def create_reminder(ctx: ToolContext, a: dict):
@@ -298,7 +298,7 @@ def _assert_public_url(url: str) -> None:
 async def read_webpage(ctx: ToolContext, a: dict):
     url = a["url"]
     _assert_public_url(url)
-    async with httpx.AsyncClient(timeout=20, follow_redirects=False, headers={"User-Agent": "Mozilla/5.0 (ASTRA personal assistant)"}) as c:
+    async with httpx.AsyncClient(timeout=20, follow_redirects=False, headers={"User-Agent": "Mozilla/5.0 (JARVIS personal assistant)"}) as c:
         for _ in range(4):  # follow redirects manually so each hop is SSRF-checked
             r = await c.get(url)
             if r.is_redirect and r.headers.get("location"):

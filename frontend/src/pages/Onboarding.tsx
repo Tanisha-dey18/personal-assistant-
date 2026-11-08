@@ -31,7 +31,7 @@ export default function Onboarding() {
     setBusy(true);
     try {
       const r = await post("/api/onboarding", { ...data, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone });
-      toast(`🧠 ASTRA now knows ${r.created.length} things about you.`);
+      toast(`🧠 JARVIS now knows ${r.created.length} things about you.`);
       setUser({ ...user!, name: data.name || user!.name, onboarded: true });
       navigate("/chat");
     } catch (e: any) {
@@ -67,7 +67,7 @@ export default function Onboarding() {
         <div className="mt-6 flex items-center justify-between">
           <button className="btn-ghost" onClick={() => (i ? setI(i - 1) : skip())}>{i ? <><ArrowLeft className="h-4 w-4" /> Back</> : "Skip for now"}</button>
           {last ? (
-            <button className="btn-primary" disabled={busy} onClick={finish}>{busy && <Spinner />} Finish & meet ASTRA</button>
+            <button className="btn-primary" disabled={busy} onClick={finish}>{busy && <Spinner />} Finish & meet JARVIS</button>
           ) : (
             <button className="btn-primary" onClick={() => setI(i + 1)}>Next <ArrowRight className="h-4 w-4" /></button>
           )}

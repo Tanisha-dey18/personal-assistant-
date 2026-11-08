@@ -61,7 +61,7 @@ export default function Home() {
           <div className="hidden md:block"><Orb size={150} onClick={() => navigate("/chat")} /></div>
         </div>
         <form className="relative mt-6 flex gap-2" onSubmit={(e) => { e.preventDefault(); if (q.trim()) navigate("/chat", { state: { prefill: q } }); }}>
-          <input className="input !py-3 !text-base" placeholder="Hey Astra, what's going on?" value={q} onChange={(e) => setQ(e.target.value)} />
+          <input className="input !py-3 !text-base" placeholder="Hey Jarvis, what's going on?" value={q} onChange={(e) => setQ(e.target.value)} />
           <button className="btn-primary !px-4"><Send className="h-4 w-4" /></button>
         </form>
       </motion.div>
@@ -69,12 +69,12 @@ export default function Home() {
       {d && !d.ai_configured && (
         <div className="flex items-start gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
-          <div>ASTRA's brain isn't connected yet. Add <code className="rounded bg-white/10 px-1">OPENAI_API_KEY</code> to <code className="rounded bg-white/10 px-1">backend/.env</code>, or paste a key in <Link className="underline" to="/integrations">Integrations</Link>.</div>
+          <div>JARVIS's brain isn't connected yet. Add <code className="rounded bg-white/10 px-1">OPENAI_API_KEY</code> to <code className="rounded bg-white/10 px-1">backend/.env</code>, or paste a key in <Link className="underline" to="/integrations">Integrations</Link>.</div>
         </div>
       )}
       {d && !d.user.onboarded && (
         <Link to="/onboarding" className="flex items-center justify-between rounded-2xl border border-violet-400/25 bg-violet-400/[0.06] p-4 text-sm text-violet-100 hover:bg-violet-400/10">
-          <span className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Let ASTRA get to know you — 2 minute onboarding</span><ArrowRight className="h-4 w-4" />
+          <span className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Let JARVIS get to know you — 2 minute onboarding</span><ArrowRight className="h-4 w-4" />
         </Link>
       )}
 
@@ -95,7 +95,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-          ) : <Empty title="No open tasks" text='Tell ASTRA "add a task to finish my DBMS assignment by Friday".' />}
+          ) : <Empty title="No open tasks" text='Tell JARVIS "add a task to finish my DBMS assignment by Friday".' />}
         </Card>
 
         <Card title="Reminders" action={<Bell className="h-4 w-4 text-slate-500" />}>

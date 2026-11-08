@@ -27,7 +27,7 @@ function AddMemory({ open, onClose, onAdded }: { open: boolean; onClose: () => v
   return (
     <Modal open={open} onClose={onClose} title="Add a memory">
       <div className="space-y-4">
-        <Field label="What should ASTRA remember?"><textarea className="input min-h-[90px]" value={f.content} onChange={(e) => setF({ ...f, content: e.target.value })} placeholder="e.g. I won 2nd place at Smart India Hackathon 2025 with a crop-disease detector." /></Field>
+        <Field label="What should JARVIS remember?"><textarea className="input min-h-[90px]" value={f.content} onChange={(e) => setF({ ...f, content: e.target.value })} placeholder="e.g. I won 2nd place at Smart India Hackathon 2025 with a crop-disease detector." /></Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Category"><select className="input" value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })}>{CATEGORIES.map((c) => <option key={c}>{c}</option>)}</select></Field>
           <Field label="Type"><select className="input" value={f.memory_type} onChange={(e) => setF({ ...f, memory_type: e.target.value })}><option>confirmed</option><option>assumption</option><option>temporary</option></select></Field>
@@ -88,7 +88,7 @@ export default function Memory() {
 
   return (
     <div>
-      <PageHeader title="Memory" subtitle="Everything ASTRA remembers — searchable, editable, deletable. You're in control."
+      <PageHeader title="Memory" subtitle="Everything JARVIS remembers — searchable, editable, deletable. You're in control."
         actions={<>
           <button className="btn-outline" onClick={exportMemories}><Download className="h-4 w-4" /> Export</button>
           <button className="btn-primary" onClick={() => setAdding(true)}><Plus className="h-4 w-4" /> Add memory</button>
@@ -119,14 +119,14 @@ export default function Memory() {
             </div>
             {loading ? <div className="flex justify-center py-10"><Spinner /></div> : items.length ? (
               <div className="space-y-2">{items.map((m) => <MemoryCard key={m.id} m={m} onChange={(nm) => setItems((s) => s.map((x) => (x.id === nm.id ? nm : x)))} onDelete={(id) => setItems((s) => s.filter((x) => x.id !== id))} />)}</div>
-            ) : <Empty icon={<Brain className="h-8 w-8" />} title={q ? "No matching memories" : "No memories yet"} text="ASTRA extracts important facts automatically as you chat. You can also add them manually or import documents." />}
+            ) : <Empty icon={<Brain className="h-8 w-8" />} title={q ? "No matching memories" : "No memories yet"} text="JARVIS extracts important facts automatically as you chat. You can also add them manually or import documents." />}
           </div>
         </div>
       )}
 
       {tab === "pending" && (
         pending.length ? <div className="space-y-2">{pending.map((m) => <MemoryCard key={m.id} m={m} onChange={() => setPending((s) => s.filter((x) => x.id !== m.id))} onDelete={(id) => setPending((s) => s.filter((x) => x.id !== id))} />)}</div>
-          : <Empty title="Nothing waiting" text="Sensitive facts (health, finances, etc.) wait here for your approval before ASTRA remembers them." />
+          : <Empty title="Nothing waiting" text="Sensitive facts (health, finances, etc.) wait here for your approval before JARVIS remembers them." />
       )}
 
       {tab === "timeline" && (

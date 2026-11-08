@@ -1,0 +1,16 @@
+# Netlify: deploy only the React frontend (the FastAPI backend runs on Render).
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Public backend URL baked into the build (not a secret).
+  VITE_API_URL = "https://astra-api-8l0s.onrender.com"
+
+# SPA routing: every path serves index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -60,7 +60,7 @@ export default function Integrations() {
   if (!d) return <div className="flex justify-center py-20"><Spinner /></div>;
   return (
     <div>
-      <PageHeader title="Integrations" subtitle="Credentials are encrypted on the server and never sent to the browser. ASTRA always asks before sending emails or creating events." />
+      <PageHeader title="Integrations" subtitle="Credentials are encrypted on the server and never sent to the browser. JARVIS always asks before sending emails or creating events." />
       <div className="grid gap-5 lg:grid-cols-2">
         <Block icon={<KeyRound className="h-5 w-5" />} title="AI brain (OpenAI-compatible)" desc="Powers chat, memory extraction, embeddings and voice. A server key in backend/.env works for everyone; a personal key here overrides it for your account."
           status={<Status ok={d.openai.connected || d.openai.server_key} label={d.openai.connected ? `Personal key ${d.openai.meta.key_hint}` : d.openai.server_key ? "Using server key" : "Not configured"} />}>
@@ -81,7 +81,7 @@ export default function Integrations() {
           )}
         </Block>
 
-        <Block icon={<Github className="h-5 w-5" />} title="GitHub" desc="Lets ASTRA see your repositories, recent commits and open issues (read-only)."
+        <Block icon={<Github className="h-5 w-5" />} title="GitHub" desc="Lets JARVIS see your repositories, recent commits and open issues (read-only)."
           status={<Status ok={d.github.connected} label={d.github.connected ? `@${d.github.meta.login}` : undefined} />}>
           {d.github.connected ? <button className="btn-outline" onClick={() => disconnect("github")}>Disconnect</button> : (
             <>

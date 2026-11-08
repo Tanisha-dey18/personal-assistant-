@@ -21,7 +21,7 @@ from app.services.user_settings import get_user_settings
 
 log = logging.getLogger("astra.memory")
 
-SYSTEM = """You are the memory curator for ASTRA, a personal AI companion. You decide what is worth
+SYSTEM = """You are the memory curator for JARVIS, a personal AI companion. You decide what is worth
 remembering long-term about the OWNER (the human user). Output ONLY JSON.
 
 Rules:
@@ -146,11 +146,11 @@ async def extract_and_store(
     for q in data["questions"][:2]:
         if isinstance(q, str) and q.strip():
             result["questions"].append(q.strip())
-            if kind != "chat":  # during chat ASTRA can just ask; during imports we queue them
-                db.add(Notification(user_id=user.id, kind="question", title="ASTRA has a question", body=q.strip()))
+            if kind != "chat":  # during chat JARVIS can just ask; during imports we queue them
+                db.add(Notification(user_id=user.id, kind="question", title="JARVIS has a question", body=q.strip()))
     if result["pending"]:
         db.add(Notification(user_id=user.id, kind="memory", title="Sensitive memory awaiting approval",
-                            body=f"{len(result['pending'])} item(s) need your OK before ASTRA remembers them.",
+                            body=f"{len(result['pending'])} item(s) need your OK before JARVIS remembers them.",
                             dedupe_key=None))
     await db.commit()
     return result

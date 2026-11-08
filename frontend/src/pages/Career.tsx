@@ -75,7 +75,7 @@ export default function Career() {
 
   return (
     <div>
-      <PageHeader title="Career" subtitle="Roadmap, applications, internships, skills and wins — ASTRA's mentor mode reads all of this."
+      <PageHeader title="Career" subtitle="Roadmap, applications, internships, skills and wins — JARVIS's mentor mode reads all of this."
         actions={<>
           <button className="btn-outline" onClick={() => navigate("/chat", { state: { prefill: "Career mentor time: based on everything you know about me, what should my roadmap for the next 6 months look like?", mode: "mentor" } })}><MessageSquare className="h-4 w-4" /> Ask mentor</button>
           <button className="btn-primary" onClick={() => setForm({ kind: "application", status: "applied" })}><Plus className="h-4 w-4" /> Add</button>
@@ -104,7 +104,7 @@ export default function Career() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card title="Roadmap" action={<button className="btn-ghost !p-1" onClick={() => setForm({ kind: "milestone", status: "todo" })}><Plus className="h-4 w-4" /></button>}>
-          {by("milestone").length ? <div className="space-y-2">{by("milestone").map((i) => <Row key={i.id} i={i} />)}</div> : <Empty title="No milestones yet" text="Ask ASTRA to draft a roadmap, then add the steps here." />}
+          {by("milestone").length ? <div className="space-y-2">{by("milestone").map((i) => <Row key={i.id} i={i} />)}</div> : <Empty title="No milestones yet" text="Ask JARVIS to draft a roadmap, then add the steps here." />}
         </Card>
         <Card title="Technical skills" action={<button className="btn-ghost !p-1" onClick={() => setForm({ kind: "skill", level: 50 })}><Plus className="h-4 w-4" /></button>}>
           {by("skill").length ? <div className="space-y-3">{by("skill").sort((a, b) => b.level - a.level).map((s) => (
@@ -118,7 +118,7 @@ export default function Career() {
           {by("internship").length ? <div className="space-y-2">{by("internship").map((i) => <Row key={i.id} i={i} />)}</div> : <Empty title="No internships yet" />}
         </Card>
         <Card title="Achievements" action={<button className="btn-ghost !p-1" onClick={() => setForm({ kind: "achievement" })}><Plus className="h-4 w-4" /></button>}>
-          {by("achievement").length ? <div className="space-y-2">{by("achievement").map((i) => <Row key={i.id} i={i} />)}</div> : <Empty title="No achievements logged" text="Hackathon wins, certifications, papers — log them so ASTRA can use them in your CV and interviews." />}
+          {by("achievement").length ? <div className="space-y-2">{by("achievement").map((i) => <Row key={i.id} i={i} />)}</div> : <Empty title="No achievements logged" text="Hackathon wins, certifications, papers — log them so JARVIS can use them in your CV and interviews." />}
         </Card>
       </div>
       <ItemForm open={!!form} onClose={() => setForm(null)} initial={form || {}} onSaved={load} />

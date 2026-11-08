@@ -1,4 +1,4 @@
-"""ASTRA backend entrypoint.  Run:  uvicorn app.main:app --reload"""
+"""JARVIS backend entrypoint.  Run:  uvicorn app.main:app --reload"""
 import asyncio
 import logging
 from contextlib import asynccontextmanager
@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
     task = asyncio.create_task(proactive.loop(stop)) if settings.PROACTIVE_INTERVAL_SECONDS > 0 else None
     if not settings.OPENAI_API_KEY:
         log.warning("OPENAI_API_KEY is not set — users must add a key in Settings → API before chatting.")
-    log.info("ASTRA online.")
+    log.info("JARVIS online.")
     yield
     stop.set()
     if task:
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
     await vectors.close()
 
 
-app = FastAPI(title="ASTRA API", version="1.0.0", lifespan=lifespan,
+app = FastAPI(title="JARVIS API", version="1.0.0", lifespan=lifespan,
               docs_url="/api/docs" if settings.ENV != "production" else None, openapi_url="/api/openapi.json")
 
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_credentials=True,
@@ -62,4 +62,4 @@ for r in (auth.router, chat.router, memory.router, productivity.router, content.
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "name": "ASTRA", "tagline": "Your mind, extended."}
+    return {"status": "ok", "name": "JARVIS", "tagline": "Your mind, extended."}

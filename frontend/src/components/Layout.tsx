@@ -11,7 +11,7 @@ import { cn, timeAgo } from "../lib/utils";
 const NAV = [
   { to: "/", label: "Home", icon: Home },
   { to: "/chat", label: "Chat", icon: MessageSquare },
-  { to: "/me", label: "What ASTRA knows", icon: UserRound },
+  { to: "/me", label: "What JARVIS knows", icon: UserRound },
   { to: "/memory", label: "Memory", icon: Brain },
   { to: "/career", label: "Career", icon: Briefcase },
   { to: "/projects", label: "Projects", icon: FolderKanban },
@@ -29,7 +29,7 @@ function Logo() {
         <div className="absolute inset-[30%] rounded-full bg-white/70 blur-[3px]" />
       </div>
       <div>
-        <div className="font-display text-lg font-bold tracking-[0.2em] text-white">ASTRA</div>
+        <div className="font-display text-lg font-bold tracking-[0.2em] text-white">JARVIS</div>
         <div className="-mt-0.5 text-[10px] tracking-wider text-slate-500">Your mind, extended.</div>
       </div>
     </div>
@@ -103,7 +103,7 @@ function NotificationBell() {
               </div>
             </div>
             <div className="max-h-[60vh] overflow-y-auto">
-              {data.items.length === 0 && <p className="px-3 py-8 text-center text-sm text-slate-500">Nothing yet. ASTRA will nudge you about reminders, deadlines and stale projects.</p>}
+              {data.items.length === 0 && <p className="px-3 py-8 text-center text-sm text-slate-500">Nothing yet. JARVIS will nudge you about reminders, deadlines and stale projects.</p>}
               {data.items.map((n) => (
                 <div key={n.id} className={cn("rounded-xl px-3 py-2.5", !n.read && "bg-white/[0.04]")}>
                   <div className="flex items-start justify-between gap-2">

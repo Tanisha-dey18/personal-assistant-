@@ -154,7 +154,7 @@ def test_consequential_action_requires_confirmation(client, auth):
 
 def test_tasks_projects_dashboard(client, auth):
     h, _ = auth
-    p = client.post("/api/projects", json={"name": "ASTRA", "tech_stack": ["FastAPI", "React"]}, headers=h).json()
+    p = client.post("/api/projects", json={"name": "JARVIS", "tech_stack": ["FastAPI", "React"]}, headers=h).json()
     t = client.post("/api/tasks", json={"title": "Write README", "priority": "high", "project_id": p["id"]}, headers=h).json()
     client.patch(f"/api/tasks/{t['id']}", json={"status": "done"}, headers=h)
     d = client.get("/api/dashboard", headers=h).json()

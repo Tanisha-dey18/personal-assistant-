@@ -1,6 +1,6 @@
 # Render Blueprint — backend on Render's FREE web service.
 #
-# Database: Render's free Postgres is deleted after 30 days, which would wipe ASTRA's memory,
+# Database: Render's free Postgres is deleted after 30 days, which would wipe JARVIS's memory,
 # so use a free, permanent Postgres from Neon (neon.tech) or Supabase (supabase.com) and paste
 # its connection string into DATABASE_URL (sslmode=require URLs are handled automatically).
 # Vectors: Qdrant Cloud free cluster → QDRANT_URL / QDRANT_API_KEY.

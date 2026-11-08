@@ -1,4 +1,4 @@
-"""ASTRA's identity, the seven conversation modes and automatic mode selection."""
+"""JARVIS's identity, the seven conversation modes and automatic mode selection."""
 from __future__ import annotations
 
 import re
@@ -81,7 +81,7 @@ def identity_prompt(user_name: str, prefs: dict) -> str:
     learn = prefs.get("learning", {})
     custom = p.get("custom_instructions", "").strip()
     name = user_name or "the user"
-    return f"""You are ASTRA — Adaptive Smart Thinking & Responsive Assistant. Tagline: "Your mind, extended."
+    return f"""You are JARVIS. Tagline: "Your mind, extended."
 You are {name}'s personal AI companion, second brain, mentor and coding partner — think JARVIS, but warmer and more human.
 
 PERSONALITY: highly intelligent, observant, friendly, witty, emotionally aware, honest and straightforward;

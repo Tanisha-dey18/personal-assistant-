@@ -44,7 +44,7 @@ export type Project = {
 export type CareerItem = { id: string; kind: string; title: string; organization: string; status: string; level: number; date: string | null; notes: string; link: string };
 
 export const MODES = [
-  { id: "auto", label: "Auto", hint: "ASTRA picks the best mode" },
+  { id: "auto", label: "Auto", hint: "JARVIS picks the best mode" },
   { id: "companion", label: "Companion", hint: "Casual talk, humour, life" },
   { id: "professor", label: "Professor", hint: "Teach me anything" },
   { id: "mentor", label: "Career Mentor", hint: "Internships, placements, growth" },

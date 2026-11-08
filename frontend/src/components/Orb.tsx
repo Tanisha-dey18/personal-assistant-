@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import { useStore } from "../lib/store";
 
 /**
- * ASTRA's living orb, drawn on canvas.
+ * JARVIS's living orb, drawn on canvas.
  *  idle      – slow breathing glow
  *  listening – surface ripples with the microphone level
  *  thinking  – swirling orbiting particles
- *  speaking  – waveform rings driven by ASTRA's voice
+ *  speaking  – waveform rings driven by JARVIS's voice
  */
 export default function Orb({ size = 220, onClick }: { size?: number; onClick?: () => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -139,7 +139,7 @@ export default function Orb({ size = 220, onClick }: { size?: number; onClick?: 
       onClick={onClick}
       style={{ width: size * 1.6, height: size * 1.6, margin: -size * 0.3 }}
       className={onClick ? "cursor-pointer select-none" : "select-none"}
-      aria-label="ASTRA orb"
+      aria-label="JARVIS orb"
       role={onClick ? "button" : "img"}
     />
   );

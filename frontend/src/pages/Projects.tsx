@@ -36,7 +36,7 @@ function ProjectForm({ open, onClose, initial, onSaved }: { open: boolean; onClo
         </div>
         <Field label={`Progress: ${f.progress || 0}%`}><input type="range" min={0} max={100} step={5} className="w-full accent-violet-500" value={f.progress || 0} onChange={(e) => setF({ ...f, progress: +e.target.value })} /></Field>
         <Field label="GitHub / repo URL"><input className="input" value={f.repo_url || ""} onChange={(e) => setF({ ...f, repo_url: e.target.value })} /></Field>
-        <Field label="Documentation / notes" hint="Markdown welcome. ASTRA appends progress notes here when you tell it about updates."><textarea className="input min-h-[140px] font-mono text-xs" value={f.docs || ""} onChange={(e) => setF({ ...f, docs: e.target.value })} /></Field>
+        <Field label="Documentation / notes" hint="Markdown welcome. JARVIS appends progress notes here when you tell it about updates."><textarea className="input min-h-[140px] font-mono text-xs" value={f.docs || ""} onChange={(e) => setF({ ...f, docs: e.target.value })} /></Field>
         <button className="btn-primary w-full" disabled={busy || !f.name} onClick={save}>{busy && <Spinner />} Save project</button>
       </div>
     </Modal>
@@ -61,10 +61,10 @@ export default function Projects() {
 
   return (
     <div>
-      <PageHeader title="Projects" subtitle="What you're building. ASTRA nudges you when something goes quiet."
+      <PageHeader title="Projects" subtitle="What you're building. JARVIS nudges you when something goes quiet."
         actions={<button className="btn-primary" onClick={() => setForm({ status: "active", progress: 0 })}><Plus className="h-4 w-4" /> New project</button>} />
       {!items ? <div className="flex justify-center py-10"><Spinner /></div> : items.length === 0 ? (
-        <Empty title="No projects yet" text='Add one here, or just tell ASTRA "I started building a resume parser with FastAPI".' />
+        <Empty title="No projects yet" text='Add one here, or just tell JARVIS "I started building a resume parser with FastAPI".' />
       ) : (
         <div className="grid gap-5 md:grid-cols-2">
           {items.map((p) => (
@@ -77,7 +77,7 @@ export default function Projects() {
                 </button>
                 <div className="flex shrink-0 gap-1">
                   {p.repo_url && <a className="btn-ghost !p-1.5" href={p.repo_url} target="_blank" rel="noreferrer" title="Repository">{p.repo_url.includes("github") ? <Github className="h-4 w-4" /> : <ExternalLink className="h-4 w-4" />}</a>}
-                  <button className="btn-ghost !p-1.5" title="Discuss with ASTRA" onClick={() => navigate("/chat", { state: { prefill: `Let's talk about my project ${p.name}. Where am I at and what should I do next?` } })}><MessageSquare className="h-4 w-4" /></button>
+                  <button className="btn-ghost !p-1.5" title="Discuss with JARVIS" onClick={() => navigate("/chat", { state: { prefill: `Let's talk about my project ${p.name}. Where am I at and what should I do next?` } })}><MessageSquare className="h-4 w-4" /></button>
                   <button className="btn-ghost !p-1.5 hover:!text-rose-300" onClick={async () => { if (confirm(`Delete ${p.name}?`)) { await del(`/api/projects/${p.id}`); load(); } }}><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>

@@ -102,7 +102,7 @@ export function speakable(md: string): string {
     .trim();
 }
 
-/** Interruptible TTS playback with an analyser so the orb can react to ASTRA's voice. */
+/** Interruptible TTS playback with an analyser so the orb can react to JARVIS's voice. */
 export class VoicePlayer {
   private audio?: HTMLAudioElement;
   private ctx?: AudioContext;

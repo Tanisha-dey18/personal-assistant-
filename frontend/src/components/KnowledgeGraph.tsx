@@ -33,7 +33,7 @@ export default function KnowledgeGraph() {
   }, [data, filter]);
 
   if (!data) return <div className="flex justify-center py-20"><Spinner /></div>;
-  if (!data.nodes.length) return <Empty title="Your knowledge graph is empty" text="As you talk about people, projects, hackathons and skills, ASTRA links them here." />;
+  if (!data.nodes.length) return <Empty title="Your knowledge graph is empty" text="As you talk about people, projects, hackathons and skills, JARVIS links them here." />;
   const types = Array.from(new Set(data.nodes.map((n) => n.type)));
 
   return (
@@ -89,7 +89,7 @@ export default function KnowledgeGraph() {
                 : <p className="text-sm text-slate-500">No memories linked.</p>}
             </div>
           </>
-        ) : <p className="text-sm text-slate-500">Click a node to see what ASTRA knows about it. Drag to rearrange, scroll to zoom.</p>}
+        ) : <p className="text-sm text-slate-500">Click a node to see what JARVIS knows about it. Drag to rearrange, scroll to zoom.</p>}
       </div>
     </div>
   );

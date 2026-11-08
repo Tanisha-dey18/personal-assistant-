@@ -11,7 +11,7 @@ const LABELS: Record<string, string> = {
   forget_memory: "Delete memory",
 };
 
-/** Human-in-the-loop confirmation for consequential actions prepared by ASTRA. */
+/** Human-in-the-loop confirmation for consequential actions prepared by JARVIS. */
 export default function ActionCard({ action, onResolved }: { action: PendingAction; onResolved?: (a: PendingAction) => void }) {
   const [state, setState] = useState(action);
   const [busy, setBusy] = useState<"approve" | "reject" | null>(null);

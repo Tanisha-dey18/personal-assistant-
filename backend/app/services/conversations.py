@@ -47,7 +47,7 @@ async def maybe_summarize(db: AsyncSession, provider, user, conv: Conversation, 
     msgs = await history(db, conv.id, limit=40)
     transcript = "\n".join(f"{m.role.upper()}: {m.content[:1200]}" for m in msgs)[-14000:]
     prompt = [
-        {"role": "system", "content": "Summarise this conversation between the user and their AI companion ASTRA for long-term recall. "
+        {"role": "system", "content": "Summarise this conversation between the user and their AI companion JARVIS for long-term recall. "
                                       "Max 180 words. Capture: topics, facts about the user, decisions made, advice given, "
                                       "and any unfinished tasks or open questions. Plain prose, no preamble."},
         {"role": "user", "content": (f"Previous summary:\n{conv.summary}\n\n" if conv.summary else "") + f"Conversation:\n{transcript}"},
