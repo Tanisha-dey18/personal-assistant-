@@ -134,7 +134,8 @@ async def run_turn(db, user: User, content: str, send: Send, conversation_id: st
             if not calls:
                 break
             messages.append({"role": "assistant", "content": text or None, "tool_calls": [
-                {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": json.dumps(c.arguments)}} for c in calls]})
+                {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": json.dumps(c.arguments)}, **c.extra}
+                for c in calls]})
             for c in calls:
                 await send({"type": "tool", "name": c.name, "status": "running", "args": c.arguments})
                 result, event = await run_tool(tctx, c.name, c.arguments)

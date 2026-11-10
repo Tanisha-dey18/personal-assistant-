@@ -33,6 +33,7 @@ class ToolCall:
     id: str
     name: str
     arguments: dict = field(default_factory=dict)
+    extra: dict = field(default_factory=dict)  # provider data to echo back, e.g. Gemini's thought_signature
 
 
 class LLMProvider(Protocol):
@@ -53,15 +54,22 @@ def _supports_temperature(model: str) -> bool:
 def _wrap_error(e: Exception) -> AIError:
     import openai
 
+    if isinstance(e, AIError):
+        return e
     if isinstance(e, openai.AuthenticationError):
-        return AIError("The AI provider rejected the API key. Check OPENAI_API_KEY (backend/.env or JARVIS → Integrations).")
-    if isinstance(e, openai.RateLimitError):
-        return AIError("The AI provider is rate-limiting us (or the account is out of credit). Try again shortly.")
-    if isinstance(e, openai.NotFoundError):
-        return AIError(f"Model not found or not available on this account: {e}")
-    if isinstance(e, openai.APIConnectionError):
-        return AIError("Couldn't reach the AI provider. Check your internet connection or OPENAI_BASE_URL.")
-    return AIError(f"AI provider error: {e}")
+        err = AIError("The AI provider rejected the API key. Check OPENAI_API_KEY (backend/.env or JARVIS → Integrations).")
+    elif isinstance(e, openai.RateLimitError):
+        err = AIError("The AI provider is rate-limiting us (free-tier limit or out of credit). Try again in a minute.")
+    elif isinstance(e, openai.NotFoundError):
+        err = AIError(f"Model not found or not available on this account: {e}")
+    elif isinstance(e, openai.APIConnectionError):
+        err = AIError("Couldn't reach the AI provider. Check your internet connection or OPENAI_BASE_URL.")
+    elif isinstance(e, openai.APIStatusError) and e.status_code >= 500:
+        err = AIError("The AI provider is overloaded right now. Try again in a moment.")
+    else:
+        err = AIError(f"AI provider error: {e}")
+    err.status = getattr(e, "status_code", None)
+    return err
 
 
 class OpenAIProvider:
@@ -73,6 +81,20 @@ class OpenAIProvider:
         self.client = AsyncOpenAI(api_key=api_key, base_url=base_url or None, timeout=120)
 
     async def stream_chat(self, messages, tools, model, temperature) -> AsyncIterator[dict]:
+        """Streams the reply. If the chosen model is overloaded/rate-limited before anything was
+        streamed (common on free tiers), retries once on FAST_MODEL."""
+        started = False
+        try:
+            async for ev in self._stream(messages, tools, model, temperature):
+                started = True
+                yield ev
+        except AIError as e:
+            if started or model == settings.FAST_MODEL or getattr(e, "status", None) not in (429, 500, 502, 503, 504):
+                raise
+            async for ev in self._stream(messages, tools, settings.FAST_MODEL, temperature):
+                yield ev
+
+    async def _stream(self, messages, tools, model, temperature) -> AsyncIterator[dict]:
         kwargs: dict[str, Any] = {"model": model, "messages": messages, "stream": True, "stream_options": {"include_usage": True}}
         if tools:
             kwargs["tools"] = tools
@@ -90,7 +112,10 @@ class OpenAIProvider:
                 if delta.content:
                     yield {"type": "token", "content": delta.content}
                 for tc in delta.tool_calls or []:
-                    slot = calls.setdefault(tc.index, {"id": "", "name": "", "args": ""})
+                    slot = calls.setdefault(tc.index, {"id": "", "name": "", "args": "", "extra": {}})
+                    for k, v in (getattr(tc, "model_extra", None) or {}).items():
+                        if v is not None:
+                            slot["extra"][k] = v
                     if tc.id:
                         slot["id"] = tc.id
                     if tc.function and tc.function.name:
@@ -104,7 +129,7 @@ class OpenAIProvider:
                         args = json.loads(slot["args"] or "{}")
                     except json.JSONDecodeError:
                         args = {}
-                    out.append(ToolCall(slot["id"], slot["name"], args))
+                    out.append(ToolCall(slot["id"], slot["name"], args, slot["extra"]))
                 yield {"type": "tool_calls", "calls": out}
         except Exception as e:  # noqa: BLE001
             raise _wrap_error(e) from e
@@ -124,11 +149,15 @@ class OpenAIProvider:
         return r.choices[0].message.content or "", Usage(model, u.prompt_tokens if u else 0, u.completion_tokens if u else 0)
 
     async def embed(self, texts):
-        try:
-            r = await self.client.embeddings.create(model=settings.EMBEDDING_MODEL, input=[t[:8000] for t in texts])
+        try:  # fixed dimensions keep the Qdrant collections compatible across embedding models
+            out = []
+            for i in range(0, len(texts), 100):  # Gemini caps a batch at 100 inputs
+                r = await self.client.embeddings.create(model=settings.EMBEDDING_MODEL, input=[t[:8000] for t in texts[i:i + 100]],
+                                                        dimensions=settings.EMBEDDING_DIM)
+                out += [d.embedding for d in r.data]
         except Exception as e:  # noqa: BLE001
             raise _wrap_error(e) from e
-        return [d.embedding for d in r.data]
+        return out
 
     async def transcribe(self, audio, filename, prompt=""):
         try:
@@ -150,6 +179,40 @@ class OpenAIProvider:
         return r.content
 
 
+class GeminiProvider(OpenAIProvider):
+    """Google Gemini through its OpenAI-compatible endpoint (free tier available).
+    Chat, tools, JSON mode and embeddings use the shared code; speech-to-text uses Gemini's
+    native audio understanding; text-to-speech is left to the browser's built-in voice."""
+
+    name = "gemini"
+
+    def __init__(self, api_key: str, base_url: str):
+        super().__init__(api_key, base_url)
+        self.api_key = api_key
+
+    async def transcribe(self, audio, filename, prompt=""):
+        import base64
+
+        import httpx
+
+        ext = filename.rsplit(".", 1)[-1].lower()
+        mime = {"webm": "audio/webm", "ogg": "audio/ogg", "m4a": "audio/mp4", "mp4": "audio/mp4", "wav": "audio/wav", "mp3": "audio/mp3"}.get(ext, "audio/webm")
+        body = {"contents": [{"parts": [
+            {"inline_data": {"mime_type": mime, "data": base64.b64encode(audio).decode()}},
+            {"text": "Transcribe this speech verbatim. The speaker may mix Hindi and English (Hinglish); write Hindi words "
+                     "in Latin script. Output only the transcript, or nothing if there is no speech."}]}]}
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.FAST_MODEL}:generateContent"
+        async with httpx.AsyncClient(timeout=60) as c:
+            r = await c.post(url, json=body, headers={"x-goog-api-key": self.api_key})
+        if r.status_code != 200:
+            raise AIError(f"Gemini transcription failed ({r.status_code}).")
+        parts = (r.json().get("candidates") or [{}])[0].get("content", {}).get("parts", [])
+        return "".join(p.get("text", "") for p in parts).strip()
+
+    async def speak(self, text, voice, speed=1.0, instructions=""):
+        raise AIError("Server voice isn't available with Gemini — using the browser's voice instead.")
+
+
 # A hook for tests (and future local providers) to override provider construction.
 _override: LLMProvider | None = None
 
@@ -165,7 +228,10 @@ def build_provider(api_key: str = "", base_url: str = "") -> LLMProvider:
     key = api_key or settings.OPENAI_API_KEY
     if not key:
         raise AIUnavailable("No AI key configured. Add OPENAI_API_KEY to backend/.env or paste a key in JARVIS → Integrations.")
-    return OpenAIProvider(key, base_url or settings.OPENAI_BASE_URL)
+    base = base_url or settings.OPENAI_BASE_URL
+    if "generativelanguage.googleapis.com" in base:
+        return GeminiProvider(key, base)
+    return OpenAIProvider(key, base)
 
 
 async def get_provider(db, user_id: str) -> LLMProvider:
