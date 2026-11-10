@@ -74,6 +74,8 @@ Open **http://localhost:5173**, create your account and run the onboarding. Then
 
 > **Tip:** once your account exists, set `ALLOW_REGISTRATION=false` in `backend/.env` so nobody else can sign up on your instance.
 
+> **Free option (Google Gemini):** get a free key at https://aistudio.google.com/apikey and use the Gemini block in `backend/.env.example`. Chat, tools, memory and embeddings all work; spoken replies use the browser voice.
+
 > **No server key?** You can also paste an OpenAI key (or an OpenRouter/Groq key plus base URL) in **Integrations → AI brain**. It's verified, stored encrypted, and used only for your account.
 
 ---
