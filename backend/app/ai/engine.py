@@ -172,6 +172,9 @@ async def post_turn(user_id: str, conv_id: str, user_text: str, reply: str, is_n
             user = await db.get(User, user_id)
             conv = await db.get(Conversation, conv_id)
             provider = await get_provider(db, user_id)
+            from app.memory.store import backfill_vectors
+
+            await backfill_vectors(db, provider, user_id)  # index memories saved before an AI key existed
             if is_new:
                 title = await convs.maybe_title(db, provider, user, conv, user_text)
                 if title and send:

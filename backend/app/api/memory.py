@@ -25,6 +25,14 @@ async def _provider(db, user):
         raise HTTPException(503, str(e)) from e
 
 
+async def _provider_or_none(db, user):
+    """Saving/editing memories works without an AI key; they are indexed for search once a key exists."""
+    try:
+        return await get_provider(db, user.id)
+    except AIUnavailable:
+        return None
+
+
 @router.get("")
 async def list_memories(category: str | None = None, status: str | None = "active", memory_type: str | None = None,
                         q: str | None = None, limit: int = 100, offset: int = 0,
@@ -56,7 +64,7 @@ class MemoryIn(BaseModel):
 
 @router.post("")
 async def create(body: MemoryIn, user: User = Depends(rate_limited_user), db: AsyncSession = Depends(get_db)):
-    provider = await _provider(db, user)
+    provider = await _provider_or_none(db, user)
     m, created = await store.create_memory(db, provider, user.id, body.content, body.category, body.memory_type, body.importance,
                                            body.sensitive, source="manual", event_date=body.event_date)
     return {"memory": store.to_dict(m), "created": created}
@@ -77,7 +85,7 @@ async def patch(mid: str, body: MemoryPatch, user: User = Depends(rate_limited_u
     m = await store.get_user_memory(db, user.id, mid)
     if not m:
         raise HTTPException(404, "Memory not found")
-    provider = await _provider(db, user) if body.content else None
+    provider = await _provider_or_none(db, user) if body.content else None
     m = await store.update_memory(db, provider, m, **body.model_dump(exclude_unset=True))
     return store.to_dict(m)
 

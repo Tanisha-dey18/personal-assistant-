@@ -149,7 +149,8 @@ async def connect_openai(body: KeyIn, user: User = Depends(rate_limited_user), d
         raise HTTPException(400, f"Key check failed: {e}") from e
     await set_secret(db, user.id, "openai", {"api_key": body.api_key, "base_url": body.base_url},
                      meta={"key_hint": "…" + body.api_key[-4:], "base_url": body.base_url})
-    return {"connected": True}
+    indexed = await store.backfill_vectors(db, p, user.id)  # memories saved before the key existed
+    return {"connected": True, "indexed_memories": indexed}
 
 
 @router.post("/integrations/tavily")

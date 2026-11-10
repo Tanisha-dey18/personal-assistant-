@@ -147,8 +147,8 @@ class OnboardingIn(BaseModel):
 async def onboarding(body: OnboardingIn, user: User = Depends(rate_limited_user), db: AsyncSession = Depends(get_db)):
     try:
         provider = await get_provider(db, user.id)
-    except AIUnavailable as e:
-        raise HTTPException(503, str(e)) from e
+    except AIUnavailable:
+        provider = None  # answers are saved now and indexed for search once an AI key is added
     if body.timezone:
         from app.services.user_settings import update_user_settings
 
@@ -158,7 +158,7 @@ async def onboarding(body: OnboardingIn, user: User = Depends(rate_limited_user)
 
         update_user_settings(user, {"learning": {"style": body.learning_style}})
     created = await importer.apply_onboarding(db, provider, user, body.model_dump())
-    return {"created": created}
+    return {"created": created, "ai_configured": provider is not None}
 
 
 @router.post("/onboarding/skip")

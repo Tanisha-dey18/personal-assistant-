@@ -33,7 +33,11 @@ export default function Onboarding() {
       const r = await post("/api/onboarding", { ...data, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone });
       toast(`🧠 JARVIS now knows ${r.created.length} things about you.`);
       setUser({ ...user!, name: data.name || user!.name, onboarded: true });
-      navigate("/chat");
+      if (r.ai_configured) navigate("/chat");
+      else {
+        toast("Saved! Add an OpenAI key here so JARVIS can start talking.");
+        navigate("/integrations");
+      }
     } catch (e: any) {
       toast(e.message, "error");
     } finally {

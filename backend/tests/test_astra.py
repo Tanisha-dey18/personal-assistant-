@@ -243,3 +243,25 @@ def test_proactive_reminder_notification(client, auth):
     assert client.portal.call(run) >= 1
     n = client.get("/api/notifications", headers=h).json()
     assert any("Call mom" in i["title"] for i in n["items"])
+
+
+def test_onboarding_without_ai_key_then_backfill(client, auth):
+    """No AI key: onboarding still saves memories; adding a key indexes them for semantic search."""
+    from app.ai.provider import set_provider_override
+    from tests.fake_provider import FakeProvider
+
+    h, _ = auth
+    set_provider_override(None)  # OPENAI_API_KEY is empty in tests -> AIUnavailable
+    try:
+        r = client.post("/api/onboarding", json={"name": "Tanisha", "education": "B.Tech CSE at Techno India"}, headers=h)
+        assert r.status_code == 200, r.text
+        assert r.json()["ai_configured"] is False and len(r.json()["created"]) == 2
+        m = client.post("/api/memory", json={"content": "The user loves astronomy", "category": "preferences"}, headers=h)
+        assert m.status_code == 200
+        assert client.get("/api/memory/search", params={"q": "astronomy"}, headers=h).status_code == 503
+    finally:
+        set_provider_override(FakeProvider())
+    r = client.post("/api/integrations/openai", json={"api_key": "sk-test-key-123456"}, headers=h).json()
+    assert r["connected"] and r["indexed_memories"] == 3
+    hits = client.get("/api/memory/search", params={"q": "B.Tech CSE Techno India"}, headers=h).json()["items"]
+    assert any("Techno India" in i["content"] for i in hits)

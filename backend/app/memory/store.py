@@ -70,8 +70,19 @@ async def create_memory(
     event_date: str | None = None, expires_at: datetime | None = None, status: str = "active", dedupe: bool = True,
     vector: list[float] | None = None,
 ) -> tuple[Memory, bool]:
-    """Returns (memory, created). If a near-identical memory exists it is refreshed instead."""
+    """Returns (memory, created). If a near-identical memory exists it is refreshed instead.
+    provider=None (no AI key yet): the row is saved without a vector; backfill_vectors() indexes it later."""
     content = content.strip()
+    if provider is None and vector is None:
+        m = Memory(
+            user_id=user_id, content=encrypt(content) if sensitive else content, category=norm_category(category),
+            memory_type=memory_type if memory_type in ("confirmed", "assumption", "temporary") else "confirmed",
+            importance=max(0.0, min(1.0, float(importance))), sensitive=sensitive, source=source, source_ref=source_ref,
+            event_date=event_date, expires_at=expires_at, status=status,
+        )
+        db.add(m)
+        await db.commit()
+        return m, True
     vector = vector or await embed_one(provider, content)
     if dedupe:
         dup, _ = await find_duplicate(provider, user_id, vector, db)
@@ -98,6 +109,24 @@ async def create_memory(
     return m, True
 
 
+async def backfill_vectors(db: AsyncSession, provider, user_id: str) -> int:
+    """Embed memories saved while no AI key was configured (rows with no Qdrant point)."""
+    rows = (await db.execute(select(Memory).where(Memory.user_id == user_id))).scalars().all()
+    if not rows:
+        return 0
+    have: set[str] = set()
+    ids = [m.id for m in rows]
+    for i in range(0, len(ids), 256):
+        pts = await vectors.client.retrieve(MEMORIES, ids=ids[i:i + 256], with_payload=False, with_vectors=False)
+        have.update(str(p.id) for p in pts)
+    missing = [m for m in rows if m.id not in have]
+    for i in range(0, len(missing), 64):
+        batch = missing[i:i + 64]
+        vecs = await provider.embed([text_of(m) for m in batch])
+        await vectors.upsert_many(MEMORIES, [(m.id, v, _payload(m)) for m, v in zip(batch, vecs)])
+    return len(missing)
+
+
 async def update_memory(db: AsyncSession, provider, m: Memory, **fields) -> Memory:
     new_content = fields.pop("content", None)
     sensitive = fields.pop("sensitive", None)
@@ -115,9 +144,12 @@ async def update_memory(db: AsyncSession, provider, m: Memory, **fields) -> Memo
     m.updated_at = datetime.now(timezone.utc)
     await db.commit()
     if new_content and new_content.strip() != current_text:
-        vec = await embed_one(provider, text)
-        await vectors.upsert(MEMORIES, m.id, vec, _payload(m))
-    else:
+        if provider is None:  # no AI key: drop the stale vector; backfill_vectors() re-embeds later
+            await vectors.delete(MEMORIES, [m.id])
+        else:
+            vec = await embed_one(provider, text)
+            await vectors.upsert(MEMORIES, m.id, vec, _payload(m))
+    elif await vectors.client.retrieve(MEMORIES, ids=[m.id], with_payload=False, with_vectors=False):
         await vectors.client.set_payload(MEMORIES, payload=_payload(m), points=[m.id])
     return m
 
